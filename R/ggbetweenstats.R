@@ -139,52 +139,52 @@
 #'   point.args = list(alpha = 0)
 #' )
 #' @export
-ggbetweenstats_test <- function(
-  data,
-  x,
-  y,
-  plot.type = "boxviolin",
-  type = "parametric",
-  pairwise.display = "significant",
-  p.adjust.method = "holm",
-  effsize.type = "unbiased",
-  bf.prior = 0.707,
-  bf.message = TRUE,
-  results.subtitle = TRUE,
-  xlab = NULL,
-  ylab = NULL,
-  caption = NULL,
-  title = NULL,
-  subtitle = NULL,
-  digits = 2L,
-  var.equal = FALSE,
-  conf.level = 0.95,
-  nboot = 100L,
-  tr = 0.2,
-  centrality.plotting = TRUE,
-  centrality.type = type,
-  centrality.point.args = list(size = 5, color = "darkred"),
-  centrality.label.args = list(
-    size = 3,
-    nudge_x = 0.4,
-    segment.linetype = 4,
-    min.segment.length = 0
-  ),
-  point.args = list(
-    position = ggplot2::position_jitterdodge(dodge.width = 0.60),
-    alpha = 0.4,
-    size = 3,
-    stroke = 0,
-    na.rm = TRUE
-  ),
-  boxplot.args = list(width = 0.3, alpha = 0.2, na.rm = TRUE),
-  violin.args = list(width = 0.5, alpha = 0.2, na.rm = TRUE),
-  ggsignif.args = list(textsize = 3, tip_length = 0.01, na.rm = TRUE),
-  ggtheme = ggstatsplot::theme_ggstatsplot(),
-  package = "RColorBrewer",
-  palette = "Dark2",
-  ggplot.component = NULL,
-  ...
+ggbetweenstats <- function(
+    data,
+    x,
+    y,
+    plot.type = "boxviolin",
+    type = "parametric",
+    pairwise.display = "significant",
+    p.adjust.method = "holm",
+    effsize.type = "unbiased",
+    bf.prior = 0.707,
+    bf.message = TRUE,
+    results.subtitle = TRUE,
+    xlab = NULL,
+    ylab = NULL,
+    caption = NULL,
+    title = NULL,
+    subtitle = NULL,
+    digits = 2L,
+    var.equal = FALSE,
+    conf.level = 0.95,
+    nboot = 100L,
+    tr = 0.2,
+    centrality.plotting = TRUE,
+    centrality.type = type,
+    centrality.point.args = list(size = 5, color = "darkred"),
+    centrality.label.args = list(
+      size = 3,
+      nudge_x = 0.4,
+      segment.linetype = 4,
+      min.segment.length = 0
+    ),
+    point.args = list(
+      position = ggplot2::position_jitterdodge(dodge.width = 0.60),
+      alpha = 0.4,
+      size = 3,
+      stroke = 0,
+      na.rm = TRUE
+    ),
+    boxplot.args = list(width = 0.3, alpha = 0.2, na.rm = TRUE),
+    violin.args = list(width = 0.5, alpha = 0.2, na.rm = TRUE),
+    ggsignif.args = list(textsize = 3, tip_length = 0.01, na.rm = TRUE),
+    ggtheme = ggstatsplot::theme_ggstatsplot(),
+    package = "RColorBrewer",
+    palette = "Dark2",
+    ggplot.component = NULL,
+    ...
 ) {
   # data -----------------------------------
 
@@ -215,7 +215,6 @@ ggbetweenstats_test <- function(
       bf.prior = bf.prior,
       nboot = nboot
     )
-
     .f <- .f_switch(test)
     subtitle_df <- .eval_f(.f, !!!.f.args, type = type)
     subtitle <- .extract_expression(subtitle_df)
@@ -238,8 +237,7 @@ ggbetweenstats_test <- function(
   } else if (plot.type == "box") {
     # Only boxplot
     plot_comparison <- ggplot(data, mapping = aes({{ x }}, {{ y }})) +
-      exec(geom_point, aes(color = {{ x }}), !!!point.args) +
-      exec(geom_boxplot, !!!boxplot.args, outlier.shape = NA)
+      exec(geom_boxplot,aes(color = {{ x }}) ,!!!boxplot.args, outlier.shape = 1)
   } else if (plot.type == "violin") {
     # Only violin plot
     plot_comparison <- ggplot(data, mapping = aes({{ x }}, {{ y }})) +
@@ -248,6 +246,7 @@ ggbetweenstats_test <- function(
   } else {
     stop("Invalid plot type. Please choose from 'boxviolin', 'box', or 'violin'.")
   }
+
 
   # centrality tagging -------------------------------------
 
@@ -369,14 +368,13 @@ ggbetweenstats_test <- function(
 #' )
 #' @export
 grouped_ggbetweenstats <- function(
-  data,
-  ...,
-  grouping.var,
-  plotgrid.args = list(),
-  annotation.args = list()
+    data,
+    ...,
+    grouping.var,
+    plotgrid.args = list(),
+    annotation.args = list()
 ) {
   .grouped_list(data, {{ grouping.var }}) %>%
     purrr::pmap(.f = ggbetweenstats, ...) %>%
     combine_plots(plotgrid.args, annotation.args)
 }
-
